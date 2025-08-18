@@ -39,8 +39,10 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'microk8s.kubectl apply -f k8s/deployment.yaml'
-                sh 'microk8s.kubectl apply -f k8s/service.yaml'
+                sh """
+                microk8s.kubectl set image deployment/hello-devops-deployment hello-devops=adrianwisniewskiit/hello-devops:${BUILD_NUMBER}
+                microk8s.kubectl apply -f k8s/service.yaml
+                """
             }
         }
     }
