@@ -49,8 +49,10 @@ pipeline {
     }
 
     post {
+        failure {
+            sh 'microk8s.kubectl rollout undo deployment/hello-devops-deployment || true'
+        }
         always {
             sh 'docker system prune -af || true'
         }
     }
-}
