@@ -42,6 +42,7 @@ pipeline {
                 sh """
                 microk8s.kubectl set image deployment/hello-devops-deployment hello-devops=adrianwisniewskiit/hello-devops:${BUILD_NUMBER}
                 microk8s.kubectl apply -f k8s/service.yaml
+                microk8s.kubectl apply -f k8s/hpa.yaml
                 """
             }
         }
