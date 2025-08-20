@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-devops-deployment
+  name: devops-cicd-deployment
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: hello-devops
+      app: devops-cicd
   template:
     metadata:
       labels:
-        app: hello-devops
+        app: devops-cicd
     spec:
       containers:
-        - name: hello-devops
-          image: adrianwisniewskiit/hello-devops:latest
+        - name: devops-cicd
+          image: adrianwisniewskiit/devops-cicd-pipeline:latest
           ports:
             - containerPort: 5000
           readinessProbe:

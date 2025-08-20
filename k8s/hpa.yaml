@@ -1,12 +1,12 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: hello-devops-hpa
+  name: devops-cicd-hpa
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: hello-devops-deployment
+    name: devops-cicd-deployment
   minReplicas: 2
   maxReplicas: 5
   metrics:
