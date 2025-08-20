@@ -1,24 +1,28 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_REPO = 'adrianwisniewskiit/hello-devops'                                          // <- change to your Docker Hub repository
+        GIT_REPO   = 'https://github.com/adrian-wisniewski-it/hello-devops-ci-cd.git'           // <- change to your GitHub repository
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/adrian-wisniewski-it/hello-devops-ci-cd.git'
+                git branch: 'main', url: "${GIT_REPO}"
             }
         }
 
         stage('Build Image') {
             steps {
-                sh 'docker build -t adrianwisniewskiit/hello-devops:$BUILD_NUMBER .'
-                sh 'docker tag adrianwisniewskiit/hello-devops:$BUILD_NUMBER adrianwisniewskiit/hello-devops:latest'
+                sh 'docker build -t ${IMAGE_REPO}:$BUILD_NUMBER .'
+                sh 'docker tag ${IMAGE_REPO}:$BUILD_NUMBER ${IMAGE_REPO}:latest'
             }
         }
 
         stage('Test Image') {
             steps {
-                sh 'docker run --rm adrianwisniewskiit/hello-devops:$BUILD_NUMBER python -m unittest || true'
+                sh 'docker run --rm ${IMAGE_REPO}:$BUILD_NUMBER python -m unittest || true'
             }
         }
 
@@ -32,15 +36,15 @@ pipeline {
 
         stage('Push Image') {
             steps {
-                sh 'docker push adrianwisniewskiit/hello-devops:$BUILD_NUMBER'
-                sh 'docker push adrianwisniewskiit/hello-devops:latest'
+                sh 'docker push ${IMAGE_REPO}:$BUILD_NUMBER'
+                sh 'docker push ${IMAGE_REPO}:latest'
             }
         }
 
         stage('Deploy to Kubernetes') {
             steps {
                 sh """
-                microk8s.kubectl set image deployment/hello-devops-deployment hello-devops=adrianwisniewskiit/hello-devops:${BUILD_NUMBER}
+                microk8s.kubectl set image deployment/hello-devops-deployment hello-devops=${IMAGE_REPO}:${BUILD_NUMBER}
                 microk8s.kubectl apply -f k8s/service.yaml
                 microk8s.kubectl apply -f k8s/hpa.yaml
                 """
@@ -56,3 +60,4 @@ pipeline {
             sh 'docker system prune -af || true'
         }
     }
+}
