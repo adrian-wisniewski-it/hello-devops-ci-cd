@@ -44,6 +44,7 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 sh """
+                microk8s.kubectl apply -f k8s/deployment.yaml
                 microk8s.kubectl set image deployment/devops-cicd-deployment devops-cicd=${IMAGE_REPO}:${BUILD_NUMBER}
                 microk8s.kubectl apply -f k8s/service.yaml
                 microk8s.kubectl apply -f k8s/hpa.yaml
